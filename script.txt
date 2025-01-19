@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+    environment {
+        // Adding Git and Maven to PATH
+        GIT_HOME = 'C:\\Program Files\\Git\\bin'  // Adjust this if Git is installed in a different location
+        PATH = "${GIT_HOME};${tool 'MAVEN_HOME'}/bin;${env.PATH}" // Adding both Git and Maven to PATH
+    }
+    tools {
+        maven 'MAVEN_HOME' // Ensure this tool is configured in Jenkins settings
+    }
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                script {
+                    cleanWs() // Clean the workspace to avoid conflicts
+                }
+            }
+        }
+        stage('Git Clone') {
+            steps {
+                bat 'git clone https://github.com/Panjalasaloni1/maven.git' // Cloning the repository
+                bat 'dir'  // List files to confirm directory structure
+            }
+        }
+        stage('Maven Clean') {
+            steps {
+                bat "cd maven && mvn clean" // Adjusted the directory name to MavenJava
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                bat "cd maven && mvn install" // Adjusted the directory name to MavenJava
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                bat "cd maven && mvn test" // Adjusted the directory name to MavenJava
+            }
+        }
+        stage('Package Application') {
+            steps {
+                bat "cd maven && mvn package" // Adjusted the directory name to MavenJava
+            }
+        }
+    }
+}
